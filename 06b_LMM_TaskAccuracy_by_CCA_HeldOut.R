@@ -152,6 +152,10 @@ levels(df1$Gender)
 # Id_number (participant)
 df1$Id_number <- as.factor(df1$Id_number)
 
+#check number of missing values for acc (zero)
+sum(is.na(df1$acc))
+
+
 ############################# Removing outliers ################################
 # zscore accuracy
 df1$acc_z_score <- ave(df1$acc, df1$Task_name, FUN=scale)
@@ -246,12 +250,12 @@ for(i in 1:length(dv)){
   assign(emmean, e) #assign emmean to emmean name
   
   #save outputs to txt file
-  capture.output(s,file = fp, append = TRUE)
-  cat("\n\n\n", file = fp, append = TRUE)
-  capture.output(a,file = fp, append = TRUE)
-  cat("\n\n\n", file = fp, append = TRUE)
-  capture.output(e,file = fp, append = TRUE)
-  cat("\n\n\n", file = fp, append = TRUE)
+  #capture.output(s,file = fp, append = TRUE)
+  #cat("\n\n\n", file = fp, append = TRUE)
+  #capture.output(a,file = fp, append = TRUE)
+  #cat("\n\n\n", file = fp, append = TRUE)
+  #capture.output(e,file = fp, append = TRUE)
+  #cat("\n\n\n", file = fp, append = TRUE)
   
 } 
 
@@ -268,10 +272,11 @@ tab_dfs(anova_list, file = myfile3,show.rownames = TRUE)
 ########################### Main effect plots ##################################
 fontsize = 6
 # create function for making continuous plots
-plots <- function(data, x, x_label, y_label){
+plots <- function(data, x, x_label, y_label, x_raw, y_raw){
   ggplot(data, aes(x=x,y=yvar)) +  theme_light()+
     geom_line()+
     geom_ribbon(aes(ymax=UCL, ymin=LCL), alpha=0.4)+ 
+    geom_point(data = df1, aes(x = x_raw, y = y_raw),alpha =0.2, size = 0.02)+
     labs(x= x_label, y=y_label)+
     theme(axis.text.y=element_text(size = fontsize, color = "black"),
           axis.text.x=element_text(size = fontsize, color = "black"),
@@ -281,29 +286,34 @@ plots <- function(data, x, x_label, y_label){
 
 ## CC 1
 
-(mylist <- list(sum_CCAloading_1=seq(-3,3,by=0.1)))
+(mylist <- list(sum_CCAloading_1=seq(-1.8,5.8,by=0.1)))
 
 sum_CCAloading_1_emmip <- emmip(model1, ~sum_CCAloading_1, at = mylist, CIs = TRUE, plotit = FALSE)
 
-sum_CCAloading_1_plot <- plots(sum_CCAloading_1_emmip, sum_CCAloading_1_emmip[, 1], "Deliberate Problem-solving", "Accuracy (z-scored)")
+sum_CCAloading_1_plot <- plots(sum_CCAloading_1_emmip, sum_CCAloading_1_emmip[, 1],
+                               "Deliberate Problem-solving", "Accuracy (z-scored)",
+                               df1$sum_CCAloading_1, df1$Z_acc_outliers)
 sum_CCAloading_1_plot
 
 ## CC 3
 
-(mylist <- list(sum_CCAloading_3=seq(-3,3,by=0.1)))
+(mylist <- list(sum_CCAloading_3=seq(-3.9,5.2,by=0.1)))
 
 sum_CCAloading_3_emmip <- emmip(model1, ~sum_CCAloading_3, at = mylist, CIs = TRUE, plotit = FALSE)
 
-sum_CCAloading_3_plot <- plots(sum_CCAloading_3_emmip, sum_CCAloading_3_emmip[, 1], "Intrusive Distraction", "Accuracy (z-scored)")
+sum_CCAloading_3_plot <- plots(sum_CCAloading_3_emmip, sum_CCAloading_3_emmip[, 1],
+                               "Intrusive Distraction", "Accuracy (z-scored)",
+                               df1$sum_CCAloading_3, df1$Z_acc_outliers)
 sum_CCAloading_3_plot
 
 ## CC 4
 
-(mylist <- list(sum_CCAloading_4=seq(-3,3,by=0.1)))
+(mylist <- list(sum_CCAloading_4=seq(-5.2,6.4,by=0.1)))
 
 sum_CCAloading_4_emmip <- emmip(model1, ~sum_CCAloading_4, at = mylist, CIs = TRUE, plotit = FALSE)
 
-sum_CCAloading_4_plot <- plots(sum_CCAloading_4_emmip, sum_CCAloading_4_emmip[, 1], "Inner Speech", "Accuracy (z-scored)")
+sum_CCAloading_4_plot <- plots(sum_CCAloading_4_emmip, sum_CCAloading_4_emmip[, 1], "Inner Speech", "Accuracy (z-scored)",
+                               df1$sum_CCAloading_4, df1$Z_acc_outliers)
 sum_CCAloading_4_plot
 
 all <- sum_CCAloading_1_plot / sum_CCAloading_3_plot /sum_CCAloading_4_plot
@@ -311,13 +321,12 @@ all
 
 # save plots as tiff
 ggsave(
-  "LMM_acc_by_pca_Holdout_maineffects.tiff",
+  "LMM_acc_by_pca_Holdout_maineffects_rawpoints.tiff",
   all, units = "cm",
   width = 5,
   height = 10,
   dpi = 1000, 
 )
-
 
 ############################ Probe Interactions ################################
 # create new txt file for post hoc comparisons
@@ -337,22 +346,25 @@ cat("\n\n\n", file = fp2, append = TRUE)
 
 ################################################################################
 # create function for interaction plots
-interaction_plots <- function(data, x, x_label, y_label){
+interaction_plots <- function(data, x, x_label, y_label, x_raw, y_raw){
+  
   ggplot(data = data, aes(x = x, y = yvar)) +
     geom_line() +
     facet_wrap(~tvar)+
     geom_ribbon(aes(ymax = UCL, ymin = LCL), alpha = 0.4) +
+    geom_point(data = df1, aes(x = x_raw, y = y_raw),alpha =0.2, size = 0.05) +
+    facet_wrap(~Task_name)+
     labs(x = x_label, y = y_label) +
     theme_light() +
     theme(axis.text.y=element_text(size = fontsize, color = "black"),
           axis.text.x=element_text(size = fontsize, color = "black"),
           axis.title.x=element_text(size = fontsize, color = "black"),
           axis.title.y=element_text(size = fontsize, color = "black"),
-          strip.text = element_text(size = fontsize, color = "black"))
+          strip.text = element_text(size = fontsize, color = "black")) 
 }
 
 # interaction between task and sum_CCAloading_3
-(mylist <- list(sum_CCAloading_3 = seq(-3, 3, by = 0.1), Task_name = c("EasyMath","HardMath" ,"FingerTap","GoNoGo",
+(mylist <- list(sum_CCAloading_3 = seq(-3.9,5.1, by = 0.1), Task_name = c("EasyMath","HardMath" ,"FingerTap","GoNoGo",
                                                                        "1B","0B" ,
                                                                        "2B-Face","2B-Scene")))
 
@@ -360,11 +372,13 @@ sum_CCAloading_3.task.emmips <- emmip(model1, Task_name ~ sum_CCAloading_3, at =
 
 
 # call interaction plot function for list of emmips set above and store each one
-sum_CCAloading_3plot <- interaction_plots(sum_CCAloading_3.task.emmips, sum_CCAloading_3.task.emmips[, 2], "Intrusive Distraction", "Accuracy (z-scored)")
+sum_CCAloading_3plot <- interaction_plots(sum_CCAloading_3.task.emmips, sum_CCAloading_3.task.emmips[, 2],
+                                          "Intrusive Distraction", "Accuracy (z-scored)",
+                                          df1$sum_CCAloading_3, df1$Z_acc_outliers)
 sum_CCAloading_3plot
 
 ggsave(
-  "LMM_acc_by_cca_heldout_interaction.tiff",
+  "LMM_acc_by_cca_heldout_interaction_rawpoints.tiff",
   sum_CCAloading_3plot, units = "cm",
   width = 6,
   height = 10,

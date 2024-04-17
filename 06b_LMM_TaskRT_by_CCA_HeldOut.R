@@ -247,12 +247,12 @@ for(i in 1:length(dv)){
   assign(emmean, e) #assign emmean to emmean name
   
   #save outputs to txt file
-  capture.output(s,file = fp, append = TRUE)
-  cat("\n\n\n", file = fp, append = TRUE)
-  capture.output(a,file = fp, append = TRUE)
-  cat("\n\n\n", file = fp, append = TRUE)
-  capture.output(e,file = fp, append = TRUE)
-  cat("\n\n\n", file = fp, append = TRUE)
+  #capture.output(s,file = fp, append = TRUE)
+  #cat("\n\n\n", file = fp, append = TRUE)
+  #capture.output(a,file = fp, append = TRUE)
+  #cat("\n\n\n", file = fp, append = TRUE)
+  #capture.output(e,file = fp, append = TRUE)
+  #cat("\n\n\n", file = fp, append = TRUE)
   
 } 
 
@@ -285,11 +285,13 @@ cat("\n\n\n", file = fp2, append = TRUE)
 ################################################################################
 # create function for interaction plots
 fontsize = 6
-interaction_plots <- function(data, x, x_label, y_label){
+interaction_plots <- function(data, x, x_label, y_label,x_raw, y_raw){
   ggplot(data = data, aes(x = x, y = yvar)) +
     geom_line() +
     facet_wrap(~tvar)+
     geom_ribbon(aes(ymax = UCL, ymin = LCL), alpha = 0.4) +
+    geom_point(data = df1, aes(x = x_raw, y = y_raw),alpha =0.2, size = 0.05) +
+    facet_wrap(~Task_name)+
     labs(x = x_label, y = y_label) +
     theme_light() +
     theme(axis.text.y=element_text(size = fontsize, color = "black"),
@@ -299,8 +301,8 @@ interaction_plots <- function(data, x, x_label, y_label){
           strip.text = element_text(size = fontsize, color = "black"))
 }
 
-# interaction between task and sum_CCAloading_3
-(mylist <- list(sum_CCAloading_4 = seq(-3, 3, by = 0.1), Task_name = c("EasyMath","HardMath" ,"FingerTap","GoNoGo",
+# interaction between task and sum_CCAloading_4
+(mylist <- list(sum_CCAloading_4 = seq(-5.2, 6.4, by = 0.1), Task_name = c("EasyMath","HardMath" ,"FingerTap","GoNoGo",
                                                                        "1B","0B" ,
                                                                        "2B-Face","2B-Scene")))
 
@@ -308,11 +310,13 @@ sum_CCAloading_4.task.emmips <- emmip(model1, Task_name ~ sum_CCAloading_4, at =
 
 
 # call interaction plot function for list of emmips set above and store each one
-sum_CCAloading_4plot <- interaction_plots(sum_CCAloading_4.task.emmips, sum_CCAloading_4.task.emmips[, 2], "Inner Speech", "Response Time (z-scored)")
+sum_CCAloading_4plot <- interaction_plots(sum_CCAloading_4.task.emmips, sum_CCAloading_4.task.emmips[, 2],
+                                          "Inner Speech", "Response Time (z-scored)",
+                                          df1$sum_CCAloading_4, df1$Z_RT_outliers)
 sum_CCAloading_4plot
 
 ggsave(
-  "LMM_RT_by_cca_heldout_interaction.tiff",
+  "LMM_RT_by_cca_heldout_interaction_rawpoints.tiff",
   sum_CCAloading_4plot, units = "cm",
   width = 6.5,
   height = 10,

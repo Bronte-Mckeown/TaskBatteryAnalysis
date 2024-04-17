@@ -137,6 +137,9 @@ levels(df1$Gender)
 # Id_number (participant)
 df1$Id_number <- as.factor(df1$Id_number)
 
+#check number of missing values for rt (8)
+sum(is.na(df1$RT))
+
 ############################# Removing outliers ################################
 # zscore RT
 df1$rt_z_score <- ave(df1$RT, df1$Task_name, FUN=scale)
@@ -231,12 +234,12 @@ for(i in 1:length(dv)){
   assign(emmean, e) #assign emmean to emmean name
   
   #save outputs to txt file
-  capture.output(s,file = fp, append = TRUE)
-  cat("\n\n\n", file = fp, append = TRUE)
-  capture.output(a,file = fp, append = TRUE)
-  cat("\n\n\n", file = fp, append = TRUE)
-  capture.output(e,file = fp, append = TRUE)
-  cat("\n\n\n", file = fp, append = TRUE)
+  #capture.output(s,file = fp, append = TRUE)
+  #cat("\n\n\n", file = fp, append = TRUE)
+  #capture.output(a,file = fp, append = TRUE)
+  #cat("\n\n\n", file = fp, append = TRUE)
+  #capture.output(e,file = fp, append = TRUE)
+  #cat("\n\n\n", file = fp, append = TRUE)
   
 } 
 
@@ -270,11 +273,13 @@ cat("\n\n\n", file = fp2, append = TRUE)
 fontsize = 6
 
 # create function for interaction plots
-interaction_plots <- function(data, x, x_label, y_label){
+interaction_plots <- function(data, x, x_label, y_label, x_raw, y_raw){
   ggplot(data = data, aes(x = x, y = yvar)) +
     geom_line() +
     facet_wrap(~tvar, ncol = 2)+
     geom_ribbon(aes(ymax = UCL, ymin = LCL), alpha = 0.4) +
+    geom_point(data = df1, aes(x = x_raw, y = y_raw),alpha =0.2, size = 0.05) +
+    facet_wrap(~Task_name, ncol = 2)+
     labs(x = x_label, y = y_label) +
     theme_light() +
     theme(axis.text.y=element_text(size = fontsize, color = "black"),
@@ -284,7 +289,7 @@ interaction_plots <- function(data, x, x_label, y_label){
           strip.text = element_text(size = fontsize, color = "black"))
 }
 # interaction between task and PCA_1
-(mylist <- list(PCA_1 = seq(-3, 3, by = 0.1), Task_name = c("EasyMath","HardMath" ,"FingerTap","GoNoGo",
+(mylist <- list(PCA_1 = seq(-3.5, 3.5, by = 0.1), Task_name = c("EasyMath","HardMath" ,"FingerTap","GoNoGo",
                                                             "1B","0B" ,
                                                             "2B-Face","2B-Scene")))
 
@@ -293,12 +298,14 @@ PCA_1.task.emmips <- emmip(model1, Task_name ~ PCA_1, at = mylist, CIs = TRUE, p
 
 
 # call interaction plot function for list of emmips set above and store each one
-PCA_1plot <- interaction_plots(PCA_1.task.emmips, PCA_1.task.emmips[, 2], "Intrusive Distraction", "Response Time (z-scored)")
+PCA_1plot <- interaction_plots(PCA_1.task.emmips, PCA_1.task.emmips[, 2],
+                               "Intrusive Distraction", "Response Time (z-scored)",
+                               df1$PCA_1, df1$Z_rt_outliers)
 PCA_1plot
 
 # save plots as tiff
 ggsave(
-  "LMM_rt_by_pca_Holdout_interactions.tiff",
+  "LMM_rt_by_pca_Holdout_interactions_rawpoint.tiff",
   PCA_1plot, units = "cm",
   width = 6,
   height = 10,
