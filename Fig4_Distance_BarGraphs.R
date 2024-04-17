@@ -39,9 +39,12 @@ fontsize = 5
 # Plotting using ggplot2 and save in a list
 for (task_name in names(results)) {
   result <- results[[task_name]]
+  df <- dfs[[task_name]]
   
   p <- ggplot(result, aes(y = reorder(task, -Mean), x = Mean)) +
     geom_bar(stat = "identity", position = "dodge", fill = "grey") +
+    geom_point(data = df, aes(x = distance, y = task), color = "blue", alpha = 0.1,
+               size = 0.0001)+
     geom_errorbar(
       aes(xmin = Mean - SE, xmax = Mean + SE),
       width = 0.3,size = 0.2,
@@ -57,7 +60,7 @@ for (task_name in names(results)) {
           axis.ticks.margin = unit(0, 'cm'),
           plot.margin = margin(0.1, 0.1, 0.1, 0.1, "cm"),
           plot.title.position = "plot") +
-    scale_x_continuous(limits = c(0, 7))
+    scale_x_continuous(limits = c(0,9),breaks=seq(0, 9, 3))
   
   plot_list[[task_name]] <- p
 }
@@ -67,7 +70,7 @@ allplots
 
 # Save the plot
 ggsave(
-  "distances_bargraphs.tiff",
+  "distances_bargraphs_rawpoints.tiff",
   allplots, units = "cm",
   width = 4.38,
   height = 3.9,
