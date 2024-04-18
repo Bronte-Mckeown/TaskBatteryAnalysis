@@ -157,8 +157,8 @@ df1$Id_number <- as.factor(df1$Id_number)
 # zscore Response Time
 df1$RT_z_score <- ave(df1$RT, df1$Task_name, FUN=scale)
 
-# Identify cases with z-score above or below 2.5
-df1$RT_outlier <- ifelse(df1$RT_z_score > -2.5 & df1$RT_z_score < 2.5, "Not Outlier", "Outlier")
+# Identify cases with z-score above 2.5
+df1$RT_outlier <- ifelse(df1$RT_z_score < 2.5, "Not Outlier", "Outlier")
 
 # set these cases to zero
 df1$Z_RT_outliers <- ifelse(df1$RT_outlier == "Outlier", 0, df1$RT_z_score)
@@ -247,12 +247,12 @@ for(i in 1:length(dv)){
   assign(emmean, e) #assign emmean to emmean name
   
   #save outputs to txt file
-  #capture.output(s,file = fp, append = TRUE)
-  #cat("\n\n\n", file = fp, append = TRUE)
-  #capture.output(a,file = fp, append = TRUE)
-  #cat("\n\n\n", file = fp, append = TRUE)
-  #capture.output(e,file = fp, append = TRUE)
-  #cat("\n\n\n", file = fp, append = TRUE)
+  capture.output(s,file = fp, append = TRUE)
+  cat("\n\n\n", file = fp, append = TRUE)
+  capture.output(a,file = fp, append = TRUE)
+  cat("\n\n\n", file = fp, append = TRUE)
+  capture.output(e,file = fp, append = TRUE)
+  cat("\n\n\n", file = fp, append = TRUE)
   
 } 
 
@@ -274,7 +274,7 @@ fp2 <- "LMM_RT_cca_heldout_posthoc.txt"
 # simple slopes
 sum_CCAloading_4.slopes <- emtrends(model1, ~ Task_name, var="sum_CCAloading_4", adjust = 'bonferroni', infer = TRUE)
 # contrast slopes
-sum_CCAloading_4.contrasts <- emtrends(model1, pairwise ~ Task_name, var="sum_CCAloading_4", adjust = 'bonferroni', infer = TRUE)
+sum_CCAloading_4.contrasts <- emtrends(model1, pairwise ~ Task_name, var="sum_CCAloading_4", adjust = 'tukey', infer = TRUE)
 # save to txt file
 cat("Probing two-way interaction between task and inner speech:\n", file = fp2, append = TRUE)
 capture.output(sum_CCAloading_4.slopes, file = fp2, append = TRUE)
@@ -318,7 +318,7 @@ sum_CCAloading_4plot
 ggsave(
   "LMM_RT_by_cca_heldout_interaction_rawpoints.tiff",
   sum_CCAloading_4plot, units = "cm",
-  width = 6.5,
+  width = 6,
   height = 10,
   dpi = 1000,
 )

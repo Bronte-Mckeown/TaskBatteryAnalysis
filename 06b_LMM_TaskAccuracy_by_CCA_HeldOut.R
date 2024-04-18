@@ -160,8 +160,8 @@ sum(is.na(df1$acc))
 # zscore accuracy
 df1$acc_z_score <- ave(df1$acc, df1$Task_name, FUN=scale)
 
-# Identify cases with z-score above or below 2.5
-df1$acc_outlier <- ifelse(df1$acc_z_score > -2.5 & df1$acc_z_score < 2.5, "Not Outlier", "Outlier")
+# Identify cases with z-score below -2.5 as outlier
+df1$acc_outlier <- ifelse(df1$acc_z_score > -2.5, "Not Outlier", "Outlier")
 
 # set these cases to zero
 df1$Z_acc_outliers <- ifelse(df1$acc_outlier == "Outlier", 0, df1$acc_z_score)
@@ -336,7 +336,7 @@ fp2 <- "LMM_acc_cca_heldout_posthoc.txt"
 # simple slopes
 sum_CCAloading_3.slopes <- emtrends(model1, ~ Task_name, var="sum_CCAloading_3", adjust = 'bonferroni', infer = TRUE)
 # contrast slopes
-sum_CCAloading_3.contrasts <- emtrends(model1, pairwise ~ Task_name, var="sum_CCAloading_3", adjust = 'bonferroni', infer = TRUE)
+sum_CCAloading_3.contrasts <- emtrends(model1, pairwise ~ Task_name, var="sum_CCAloading_3", adjust = 'tukey', infer = TRUE)
 # save to txt file
 cat("Probing two-way interaction between task and intrusive distraction:\n", file = fp2, append = TRUE)
 capture.output(sum_CCAloading_3.slopes, file = fp2, append = TRUE)

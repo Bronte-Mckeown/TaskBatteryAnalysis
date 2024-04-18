@@ -139,9 +139,9 @@ options("contrasts")
 fp = "LMM_pca_by_task_holdout.txt"
 
 # set current directory to results folder
-setwd("C:/Users/bront/Documents/CanadaPostdoc/MegaProject/MegaProject/scratch/results/pca/lmm")
+setwd("C:/Users/bront/Documents/CanadaPostdoc/MegaProject/TaskBatteryAnalysis/scratch/results/pca/lmm")
 
-results_dir <- "C:/Users/bront/Documents/CanadaPostdoc/MegaProject/MegaProject/scratch/results/pca/lmm"
+results_dir <- "C:/Users/bront/Documents/CanadaPostdoc/MegaProject/TaskBatteryAnalysis/scratch/results/pca/lmm"
 
 ############################# Models ###########################################
 # set up list of dependent variables
@@ -212,12 +212,12 @@ for(i in 1:length(dv)){
   assign(emmean, e) #assign emmean to emmean name
   
   #save outputs to txt file
-  capture.output(s,file = fp, append = TRUE)
-  cat("\n\n\n", file = fp, append = TRUE)
-  capture.output(a,file = fp, append = TRUE)
-  cat("\n\n\n", file = fp, append = TRUE)
-  capture.output(e,file = fp, append = TRUE)
-  cat("\n\n\n", file = fp, append = TRUE)
+  #capture.output(s,file = fp, append = TRUE)
+  #cat("\n\n\n", file = fp, append = TRUE)
+  #capture.output(a,file = fp, append = TRUE)
+  #cat("\n\n\n", file = fp, append = TRUE)
+  #capture.output(e,file = fp, append = TRUE)
+  #cat("\n\n\n", file = fp, append = TRUE)
   
 } 
 
@@ -315,16 +315,18 @@ write.csv(merged_df, file = "pcascores_emmeans.csv", row.names = FALSE)
 
 # set up list with names of emmeans (predicted means)
 list <- c("emmean1", "emmean2","emmean3", "emmean4","emmean5")
+raw <- list(df1$PCA_0, df1$PCA_1, df1$PCA_2, df1$PCA_3, df1$PCA_4)
 
 # set font size
 fontsize = 6
 
 # function for making plots
-myplot2 <- function(data, title){
+myplot2 <- function(data, title, x_raw){
   # x axis = Task_name, y axis = emmean, bars = gradient
   ggplot(summary(data), aes(x = emmean, y = Task_name)) +
     theme_light() +
     geom_bar(stat="identity",width = 2/.pt, position="dodge", color = "black" ,fill = "grey", size = 0.5/.pt) +
+    # geom_point(data = df1, aes(x = x_raw, y = Task_name,alpha =0.01,size = 0.00001, color = 'blue'))+
     xlim(-2.5, 2.5) +
     theme(axis.text.y = element_blank(),
           axis.text.x=element_text(size = fontsize,color = "black"),
@@ -341,7 +343,7 @@ myplot2 <- function(data, title){
 # call function for list of emmeans set above and store each one (bar1, bar2 etc)
 for(i in seq_along(list)){
   bar <- paste("bar",i, sep="")
-  b <- myplot2(get(list[i]), titles[i])
+  b <- myplot2(get(list[i]), titles[i], raw[[i]])
   assign(bar, b)
 }
 
@@ -359,6 +361,31 @@ ggsave(
   all_plots, units = "cm",
   width = 8.7,
   height = 4,
+  dpi = 1000)
+
+
+# box plots
+box1 <- ggplot(df1, aes(x=PCA_0, y=Task_name)) + 
+  geom_boxplot(outlier.size = 0.01)&theme(axis.text.y=element_text(size = fontsize,color = "black"))
+box2 <- ggplot(df1, aes(x=PCA_1, y=Task_name)) + 
+  geom_boxplot(outlier.size = 0.01)+theme(axis.text.y = element_blank())
+box3 <- ggplot(df1, aes(x=PCA_2, y=Task_name)) + 
+  geom_boxplot(outlier.size = 0.01)+theme(axis.text.y = element_blank())
+box4 <- ggplot(df1, aes(x=PCA_3, y=Task_name)) + 
+  geom_boxplot(outlier.size = 0.01)+theme(axis.text.y = element_blank())
+box5 <- ggplot(df1, aes(x=PCA_4, y=Task_name)) + 
+  geom_boxplot(outlier.size = 0.01)+theme(axis.text.y = element_blank())
+
+allbox <- ((box1)|(box2)|(box3)|(box4)|(box5))& theme(axis.text.x=element_text(size = fontsize,color = "black"),
+                                                      axis.title.y = element_blank(),
+                                                      axis.title.x = element_blank())
+allbox
+
+ggsave(
+  "pcascores_bytask_boxplot.tiff",
+  allbox, units = "cm",
+  width = 20,
+  height = 7,
   dpi = 1000)
 
 ############################# Assumptions ######################################

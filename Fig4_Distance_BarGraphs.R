@@ -65,7 +65,8 @@ for (task_name in names(results)) {
   plot_list[[task_name]] <- p
 }
 
-allplots <- (plot_list[[1]] + plot_list[[2]]) / (plot_list[[3]] + plot_list[[4]]) & theme(plot.margin = margin(0.01, 0.01, 0.01, 0.01, "cm"))
+allplots <- (plot_list[[1]] + plot_list[[2]]) / (plot_list[[3]] + plot_list[[4]]) &
+  theme(plot.margin = margin(0.01, 0.01, 0.01, 0.01, "cm"))
 allplots
 
 # Save the plot
@@ -75,4 +76,3 @@ ggsave(
   width = 4.38,
   height = 3.9,
   dpi = 1000)
-

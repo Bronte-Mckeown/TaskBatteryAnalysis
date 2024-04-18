@@ -144,8 +144,8 @@ sum(is.na(df1$RT))
 # zscore RT
 df1$rt_z_score <- ave(df1$RT, df1$Task_name, FUN=scale)
 
-# Identify cases with z-score above or below 2.5
-df1$rt_outlier <- ifelse(df1$rt_z_score > -2.5 & df1$rt_z_score < 2.5, "Not Outlier", "Outlier")
+# Identify cases with z-score above 2.5 as outliers
+df1$rt_outlier <- ifelse(df1$rt_z_score < 2.5, "Not Outlier", "Outlier")
 
 # set these cases to zero
 df1$Z_rt_outliers <- ifelse(df1$rt_outlier == "Outlier", 0, df1$rt_z_score)
@@ -234,12 +234,12 @@ for(i in 1:length(dv)){
   assign(emmean, e) #assign emmean to emmean name
   
   #save outputs to txt file
-  #capture.output(s,file = fp, append = TRUE)
-  #cat("\n\n\n", file = fp, append = TRUE)
-  #capture.output(a,file = fp, append = TRUE)
-  #cat("\n\n\n", file = fp, append = TRUE)
-  #capture.output(e,file = fp, append = TRUE)
-  #cat("\n\n\n", file = fp, append = TRUE)
+  capture.output(s,file = fp, append = TRUE)
+  cat("\n\n\n", file = fp, append = TRUE)
+  capture.output(a,file = fp, append = TRUE)
+  cat("\n\n\n", file = fp, append = TRUE)
+  capture.output(e,file = fp, append = TRUE)
+  cat("\n\n\n", file = fp, append = TRUE)
   
 } 
 
@@ -261,7 +261,7 @@ fp2 <- "LMM_rt_pca_holdout_posthoc.txt"
 # simple slopes
 task_pc1.slopes <- emtrends(model1, ~ Task_name, var="PCA_1", adjust = 'bonferroni', infer = TRUE)
 # contrast slopes
-task_pc1.contrasts <- emtrends(model1, pairwise ~ Task_name, var="PCA_1", adjust = 'bonferroni', infer = TRUE)
+task_pc1.contrasts <- emtrends(model1, pairwise ~ Task_name, var="PCA_1", adjust = 'tukey', infer = TRUE)
 # save to txt file
 cat("Probing two-way interaction between task and intrusive distraction:\n", file = fp2, append = TRUE)
 capture.output(task_pc1.slopes, file = fp2, append = TRUE)

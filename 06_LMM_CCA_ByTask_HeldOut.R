@@ -219,12 +219,12 @@ for(i in 1:length(dv)){
   assign(emmean, e) #assign emmean to emmean name
   
   #save outputs to txt file
-  capture.output(s,file = fp, append = TRUE)
-  cat("\n\n\n", file = fp, append = TRUE)
-  capture.output(a,file = fp, append = TRUE)
-  cat("\n\n\n", file = fp, append = TRUE)
-  capture.output(e,file = fp, append = TRUE)
-  cat("\n\n\n", file = fp, append = TRUE)
+  #capture.output(s,file = fp, append = TRUE)
+  #cat("\n\n\n", file = fp, append = TRUE)
+  #capture.output(a,file = fp, append = TRUE)
+  #cat("\n\n\n", file = fp, append = TRUE)
+  #capture.output(e,file = fp, append = TRUE)
+  #cat("\n\n\n", file = fp, append = TRUE)
   
 } 
 
@@ -338,6 +338,30 @@ ggsave(
   height = 10,
   dpi = 1000, 
 )
+
+
+# box plots
+box1 <- ggplot(df1, aes(x=sum_CCAloading_1, y=Task_name)) + 
+  geom_boxplot(outlier.size = 0.01)&theme(axis.text.y=element_text(size = fontsize,color = "black"))
+box2 <- ggplot(df1, aes(x=sum_CCAloading_2, y=Task_name)) + 
+  geom_boxplot(outlier.size = 0.01)+theme(axis.text.y = element_blank())
+box3 <- ggplot(df1, aes(x=sum_CCAloading_1, y=Task_name)) + 
+  geom_boxplot(outlier.size = 0.01)+theme(axis.text.y = element_blank())
+box4 <- ggplot(df1, aes(x=sum_CCAloading_1, y=Task_name)) + 
+  geom_boxplot(outlier.size = 0.01)+theme(axis.text.y = element_blank())
+
+allbox <- ((box1)|(box2)|(box3)|(box4))& theme(axis.text.x=element_text(size = fontsize,color = "black"),
+                                                      axis.title.y = element_blank(),
+                                                      axis.title.x = element_blank())
+allbox
+
+ggsave(
+  "sumvariates_bytask_boxplot.tiff",
+  allbox, units = "cm",
+  width = 20,
+  height = 7,
+  dpi = 1000)
+
 
 ############################# Assumptions ######################################
 models = c(model1, model2, model3, model4)
