@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-'''
+"""
 Correlate fMRI task maps with Gradient connectivity maps to produce state-space coordinates for each 
 group-level task map in the task battery (14 maps).
 
@@ -11,34 +11,26 @@ Uses cortical + subcortical gradient maps.
 
 Spearman correlation.
 
-'''
+"""
 import os
 from StateSpace import CorrelateTasksWithGradients
 
-# get path to output dir 
-outputdir = os.path.join(os.path.split(os.path.split(os.path.realpath(__file__))[0])[0], 'TaskBatteryAnalysis/scratch/data')
+# get path to output dir
+outputdir = os.path.join(
+    os.path.split(os.path.split(os.path.realpath(__file__))[0])[0],
+    "TaskBatteryAnalysis/scratch/data",
+)
 
 # if os.path.exists(outputdir) == False: #If scratch doesn't exist, create.
 #     os.mkdir(outputdir)
-
+# files = os.listdir("scratch/data/taskmaps_masked")
+# files = [os.path.join("scratch/data/taskmaps_masked", f) for f in files]
 # Combined mask, cortical and subcortical with Spearman correlation
-CorrelateTasksWithGradients.corrGroup('combinedmask_cortical_subcortical',
-                                      'all',
-                                      outputdir, corr_method = 'spearman',
-                                      saveMaskedimgs = True,
-                                      verbose = 1)
-
-
-
-        
-
-
-
-
-
-
-
-        
-
-
-
+CorrelateTasksWithGradients.corrGroup(
+    "combinedmask_cortical_subcortical",
+    "all",
+    outputdir,
+    corr_method="spearman",
+    saveMaskedimgs=True,
+    verbose=1,
+)

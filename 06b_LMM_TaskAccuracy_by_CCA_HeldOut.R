@@ -19,7 +19,7 @@ library(stringr)
 
 ########################## Read in data ########################################
 # Set the path to the folder containing the files
-folder_path <- "C:/Users/bront/Documents/CanadaPostdoc/MegaProject/TaskBatteryAnalysis/scratch/results/cca/holdOut"
+folder_path <- "scratch/results/cca/holdOut"
 
 # Get the list of files with the desired pattern
 file_pattern <- "*_variates.csv"  # Change this to your desired file pattern
@@ -120,7 +120,7 @@ for (file in file_list) {
 }
 
 # merge with task performance data
-perf_df = read.csv("C:/Users/bront/Documents/CanadaPostdoc/MegaProject/TaskBatteryAnalysis/scratch/data/task_perf_correctRT.csv")
+perf_df = read.csv("scratch/data/task_perf_correctRT.csv")
 
 df$Id_number <- as.character(df$Id_number)
 df$Task_name <- as.character(df$Task_name)
@@ -176,10 +176,15 @@ options("contrasts")
 # set file name for lmer text output
 fp = "LMM_taskacc_CCA_holdout.txt"
 
-# set current directory to results folder
-setwd("C:/Users/bront/Documents/CanadaPostdoc/MegaProject/TaskBatteryAnalysis/scratch/results/cca/lmm/taskperf/acc")
+if (!dir.exists(file.path(getwd(), "scratch/results/cca/lmm/taskperf/acc"))) {
+  # Create the directory if it doesn't exist
+  dir.create(file.path(getwd(), "scratch/results/cca/lmm/taskperf/acc"), recursive = TRUE)
+}
 
-results_dir <- "C:/Users/bront/Documents/CanadaPostdoc/MegaProject/TaskBatteryAnalysis/scratch/results/cca/lmm/taskperf/acc"
+# set current directory to results folder
+results_dir <- file.path(getwd(), "scratch/results/cca/lmm/taskperf/acc")
+# set current directory to results folder
+setwd(file.path(getwd(), "scratch/results/cca/lmm/taskperf/acc"))
 
 ############################# Models ###########################################
 # set up list of dependent variables
@@ -312,7 +317,7 @@ sum_CCAloading_3_plot
 
 sum_CCAloading_4_emmip <- emmip(model1, ~sum_CCAloading_4, at = mylist, CIs = TRUE, plotit = FALSE)
 
-sum_CCAloading_4_plot <- plots(sum_CCAloading_4_emmip, sum_CCAloading_4_emmip[, 1], "Inner Speech", "Accuracy (z-scored)",
+sum_CCAloading_4_plot <- plots(sum_CCAloading_4_emmip, sum_CCAloading_4_emmip[, 1], "Positive Engagement", "Accuracy (z-scored)",
                                df1$sum_CCAloading_4, df1$Z_acc_outliers)
 sum_CCAloading_4_plot
 

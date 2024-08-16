@@ -11,10 +11,10 @@ library(patchwork)
 
 ################################################################################
 # set working directory
-setwd("C:\\Users\\bront\\Documents\\CanadaPostdoc\\MegaProject\\TaskBatteryAnalysis\\")
-
+# setwd("C:\\Users\\bront\\Documents\\CanadaPostdoc\\MegaProject\\TaskBatteryAnalysis\\")
+file_path <- file.path(getwd(),"scratch\\results\\cca\\allTasks\\allTask_variates.csv")
 # Read the first CSV file of omnibus CCA
-first_csv <- read.csv("scratch\\results\\cca\\allTasks\\allTask_variates.csv")
+first_csv <- read.csv(file_path)
 
 # Sort first_csv by 'Id_number' and 'Task_name'
 first_csv_sorted <- first_csv %>%
@@ -120,7 +120,7 @@ result_df <- bind_cols(correlation_list)
 
 # Now 'result_df' contains the concatenated correlations for each component
 #save as csv
-setwd("C:\\Users\\bront\\Documents\\CanadaPostdoc\\MegaProject\\TaskBatteryAnalysis\\scratch\\results\\cca")
+setwd(file.path(getwd(), "scratch\\results\\cca"))
 write.csv(result_df, "heldoutcca_sim.csv", row.names = FALSE)
 
 # Access each dataframe from the list by PCA correlation
@@ -140,7 +140,7 @@ for (i in 1:4) {
 }
 
 ################################ Greyscale bar #################################
-setwd("C:/Users/bront/Documents/CanadaPostdoc/MegaProject/TaskBatteryAnalysis/scratch/results/cca")
+# setwd("C:/Users/bront/Documents/CanadaPostdoc/MegaProject/TaskBatteryAnalysis/scratch/results/cca")
 
 fontsize = 6
 # Define task order

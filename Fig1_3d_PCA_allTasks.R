@@ -6,10 +6,10 @@ library("plot3D")
 
 ############################### Read in data ###################################
 
-setwd("C:\\Users\\bront\\Documents\\CanadaPostdoc\\MegaProject\\TaskBatteryAnalysis\\")
-
+# setwd("C:\\Users\\bront\\Documents\\CanadaPostdoc\\MegaProject\\TaskBatteryAnalysis\\")
+file_path <- file.path(getwd(),"scratch/results/pca/allTasks/allTasksNoRotation5_20112023_11-40-53/csvdata/projected_pca_scores.csv")
 # Read the first CSV file of omnibus PCA
-first_csv <- read.csv("scratch/results/pca/allTasks/allTasksNoRotation5_20112023_11-40-53/csvdata/projected_pca_scores.csv")
+first_csv <- read.csv(file_path, na.strings=c(""," ","NA", "nan"))
 
 # Sort first_csv by 'Id_number' and 'Task_name'
 first_csv_sorted <- first_csv %>%
@@ -20,7 +20,7 @@ df2 <- first_csv %>%
   group_by(Task_name) %>%
   summarise_at(vars(c(PCA_0, PCA_1, PCA_2, PCA_3, PCA_4)), list(mean = mean))
 
-setwd("C:\\Users\\bront\\Documents\\CanadaPostdoc\\MegaProject\\TaskBatteryAnalysis\\scratch\\results\\pca")
+setwd(file.path(getwd(), "scratch\\results\\pca"))
 
 write.csv(df2, "pca_taskaverages.csv", row.names = FALSE)
 
@@ -45,8 +45,7 @@ png("pca_scatterplot3d_plot.png",  width     = 6.2,
 
 with(df2, text3D(PCA_0_mean,PCA_1_mean, PCA_2_mean, 
                  labels = Task_name,
-                 theta = 70, phi = 10, xlim = c(-1.5,1.5),
-                 
+                 theta = 70, phi = 10, xlim = c(-1.5, 1.5), ylim = c(-1.5, 1.5), zlim = c(-1.5, 1.5),
                  xlab = "", ylab = "", zlab = "", 
                  main = "", cex = 1, 
                  bty = "g", d = 2, 

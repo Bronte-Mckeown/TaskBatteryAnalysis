@@ -6,7 +6,6 @@ library(patchwork)
 
 ############################### Read in data ###################################
 # set directory
-setwd("C:\\Users\\bront\\Documents\\CanadaPostdoc\\MegaProject\\TaskBatteryAnalysis\\")
 
 # Read the first CSV file of omnibus PCA
 first_csv <- read.csv("scratch/results/pca/allTasks/allTasksNoRotation5_20112023_11-40-53/csvdata/projected_pca_scores.csv")
@@ -113,7 +112,7 @@ for (path in data_paths) {
 result_df <- bind_cols(correlation_list)
 
 #save as csv
-setwd("C:\\Users\\bront\\Documents\\CanadaPostdoc\\MegaProject\\TaskBatteryAnalysis\\scratch\\results\\pca")
+setwd(file.path(getwd(),"scratch\\results\\pca"))
 write.csv(result_df, "heldoutpca_sim.csv", row.names = FALSE)
 
 # Access each dataframe from the list by PCA correlation
@@ -176,8 +175,6 @@ pca_plot_1 <- pca_plot_1 + theme(axis.text.y=element_text(size = fontsize,color 
 all_plots <- ((pca_plot_1)|(pca_plot_2)|(pca_plot_3)|(pca_plot_4)|(pca_plot_5))&
   geom_vline(xintercept = 0, size = 0.2/.pt)
 all_plots
-
-setwd("C:/Users/bront/Documents/CanadaPostdoc/MegaProject/TaskBatteryAnalysis/scratch/results/pca")
 
 ggsave(
   "Holdout_similarity_barchart.tiff",
