@@ -317,7 +317,11 @@ fontsize = 6
 myplot <- function(data, title, order) {
   # Extract data from emmGrid object
   data_summary <- summary(data)
-  
+    
+    
+  data_summary <- data_summary %>%
+    mutate(upper.CL = emmean + (2.913851 * SE),
+          lower.CL = emmean - (2.913851 * SE))
   # Access Task_name column
   task_names <- data_summary$Task_name
   
