@@ -45,7 +45,7 @@ png("pca_scatterplot3d_plot.png",  width     = 6.2,
 
 with(df2, text3D(PCA_0_mean,PCA_1_mean, PCA_2_mean, 
                  labels = Task_name,
-                 theta = 70, phi = 10, xlim = c(-1.5, 1.5), ylim = c(-1.5, 1.5), zlim = c(-1.5, 1.5),
+                 theta = 70, phi = 10, xlim = c(-1.4, 1.4), ylim = c(-1.4, 1.4), zlim = c(-1.4, 1.4),
                  xlab = "", ylab = "", zlab = "", 
                  main = "", cex = 1, 
                  bty = "g", d = 2, 

@@ -37,6 +37,10 @@ task_name_mapping <- c(
 df1 <- df1 %>%
   mutate(Task_name = task_name_mapping[Task_name])
 
+# Filter out "EasyMath" and "You" tasks for visual clarity. They overlap with GonoGo and Friend tasks respectively
+df1 <- df1 %>%
+  filter(Task_name != "EasyMath" & Task_name != "You")
+
 # change directory to results
 setwd(file.path(getwd(),"scratch\\results"))
 
