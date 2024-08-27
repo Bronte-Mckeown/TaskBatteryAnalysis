@@ -29,6 +29,8 @@ from utils.cca import prepare_X, prepare_Y, train_CCA, shuff, select_cols
 esq_data = pd.read_csv("scratch//data//esq_demo_forPCA.csv")
 esq_data["Age"] = esq_data["Age"].astype(str)  # set to str so not inc. in PCA
 
+esq_data = esq_data.drop(['Age','Gender','Language','Country'], axis=1)
+
 # Step 1 & 2: Group by 'Id_number' and 'task_name', then calculate the mean
 esq_data = esq_data.groupby(["Id_number", "Task_name"]).mean()
 
@@ -104,105 +106,5 @@ y_weights_df.to_csv(
     f"scratch\\results\\cca\\groupedTasks\\grad_weights_noRot_{n_comp}ncomp.csv"
 )
 
-############################# Null CCAs ############################################
-
-## call train_CCA on all null (shuffled) data
-# first shuffle the PCA data
-num_iterations = 1000
-type_shuff = "byPS_same"  # "basic", "byPS_diff" or "byPS_same"
-shuffled_dict = shuff(num_iterations, pca_scaled, type_shuff)
-
-# create empty dictionaries for storing null results
-null_corrs_dict = {}
-null_ca_dict = {}
-
-for iter_num, shuff_pca in shuffled_dict.items():
-    (
-        null_ca,
-        null_X_c,
-        null_Y_c,
-        null_X_Y_sum,
-        null_X_c_scaler,
-        null_Y_c_scaler,
-        null_corrs,
-    ) = train_CCA(shuff_pca, grad_scaled, n_comp, save=False)
-    null_corrs_dict[iter_num] = null_corrs
-    null_ca_dict[iter_num] = null_ca
-
-###################################### p-value for correlations #####################
-# first create dataframes of all the real and null correlations
-real_corrs_df = pd.DataFrame(corrs).T
-null_corrs_df = pd.DataFrame.from_dict(null_corrs_dict).T
-
-# rename columns
-null_corrs_df.columns = [f"Correlation {i+1}" for i in range(null_corrs_df.shape[1])]
-real_corrs_df.columns = [f"Correlation {i+1}" for i in range(real_corrs_df.shape[1])]
-
-# calculate p-value for each CCA correlation by counting the number of null correlations that are
-# greater than the real correlation and dividing by the number of permutations
-
-p_values = []  # create list for storing p-values
-
-# loop over columns in null dataframe
-for col in range(null_corrs_df.shape[1]):
-    # count the number of null correlations that are greater or equal to the real correlation (+1)
-    # divide by the number of permutations (+1)
-    p_value = (
-        ((null_corrs_df.iloc[:, col] >= real_corrs_df.iloc[0, col]).sum()) + 1
-    ) / ((null_corrs_df.shape[0]) + 1)
-    p_values.append(p_value)
-
-print(p_values)
-
-######################### Plotting correlation permutations ###########################
-
-# want each column to be a subplot of a figure with 4 rows and 1 column
-# for each column in real_corrs_df and null_corrs_df, plot the real correlation as a line and the null correlations as a density plot
-
-# create figure
-fig, axs = plt.subplots(nrows=n_comp, ncols=1, figsize=(10, 10))
-
-# loop over columns
-for col in range(null_corrs_df.shape[1]):
-    # plot real correlation as a dotted green line
-    axs[col].axvline(
-        x=real_corrs_df.iloc[0, col],
-        color="green",
-        linestyle="dotted",
-        label="Real Correlation",
-    )
-    # plot null correlations as a density plot (kde)
-    sns.kdeplot(
-        data=null_corrs_df.iloc[:, col],
-        ax=axs[col],
-        color="grey",
-        fill=True,
-        alpha=0.5,
-        linewidth=0,
-        label="Null Correlations",
-    )
-    # set title
-    axs[col].set_title(f"")
-    # set x and y labels
-    axs[col].set_xlabel(f"Canonical correlation {col+1}")
-    axs[col].set_ylabel("Density")
-    # set x limits
-    axs[col].set_xlim(-1, 1)
-    # set legend
-    if col == 0:
-        axs[col].legend()
-
-# adjust spacing between subplots
-fig.tight_layout()
-# save figure
-fig.savefig(
-    f"scratch//results//cca//allTasks//cca_corrs_noRot_pca{n_comp}_{type_shuff}_pcashuff_{num_iterations}iters.png"
-)
-
-# also save out for plotting in R
-null_corrs_df.to_csv(
-    f"scratch\\results\\cca\\allTasks\\nullcorrs_{type_shuff}_pca.csv", index=False
-)
-real_corrs_df.to_csv(f"scratch\\results\\cca\\allTasks\\realcorrs.csv", index=False)
 
 print("end")

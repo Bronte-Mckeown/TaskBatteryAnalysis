@@ -21,10 +21,9 @@ outputdir = os.path.join(
     "TaskBatteryAnalysis/scratch/data",
 )
 
-# if os.path.exists(outputdir) == False: #If scratch doesn't exist, create.
-#     os.mkdir(outputdir)
-# files = os.listdir("scratch/data/taskmaps_masked")
-# files = [os.path.join("scratch/data/taskmaps_masked", f) for f in files]
+if os.path.exists(outputdir) == False: #If scratch doesn't exist, create.
+    os.mkdir(outputdir)
+
 # Combined mask, cortical and subcortical with Spearman correlation
 CorrelateTasksWithGradients.corrGroup(
     "combinedmask_cortical_subcortical",

@@ -8,8 +8,8 @@ ccs = list(cca_new.axes[1])
 cca_old = cca_old.reindex(cca_new.index)
 
 
-# cca_new[ccs[1]] *= -1
-# cca_new[ccs[2]] *= -1
+cca_new[ccs[1]] *= -1
+cca_new[ccs[2]] *= -1
 
 
 

@@ -10,7 +10,7 @@ nonagg = pd.read_csv(
 ).stack()
 
 agg = pd.read_csv(
-    "scratch/results/cca/old/grad_weights_noRot_5ncomp.csv",
+    "scratch/results/cca/groupedTasks/grad_weights_noRot_5ncomp.csv",
     index_col=0,
     header=0,
 ).stack()
