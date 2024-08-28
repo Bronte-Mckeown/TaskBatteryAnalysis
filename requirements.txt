@@ -3,3 +3,4 @@ numpy
 matplotlib
 git+https://github.com/Bronte-Mckeown/ThoughtSpace
 git+https://github.com/Bronte-Mckeown/StateSpace
+neuromaps
