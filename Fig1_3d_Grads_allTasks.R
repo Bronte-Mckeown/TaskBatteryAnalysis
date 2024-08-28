@@ -9,10 +9,11 @@ library(plot3D)
 
 ########################## Read in data ########################################
 #set current working directory
-setwd("C:\\Users\\bront\\Documents\\CanadaPostdoc\\MegaProject\\TaskBatteryAnalysis\\scratch\\data\\source")
-
+# setwd("C:\\Users\\bront\\Documents\\CanadaPostdoc\\MegaProject\\TaskBatteryAnalysis\\scratch\\data\\source")
+file_path <- file.path(getwd(), "scratch/data/gradscores_spearman_combinedmask_cortical_subcortical.csv")
+print(file_path)
 #read in csv file
-df1 <- read.csv("gradscores_spearman_combinedmask_cortical_subcortical.csv", na.strings=c(""," ","NA", "nan"))
+df1 <- read.csv(file_path, na.strings=c(""," ","NA", "nan"))
 
 # Define the mapping between task names
 task_name_mapping <- c(
@@ -36,8 +37,12 @@ task_name_mapping <- c(
 df1 <- df1 %>%
   mutate(Task_name = task_name_mapping[Task_name])
 
+# Filter out "EasyMath" and "You" tasks for visual clarity. They overlap with GonoGo and Friend tasks respectively
+df1 <- df1 %>%
+  filter(Task_name != "EasyMath" & Task_name != "You")
+
 # change directory to results
-setwd("C:\\Users\\bront\\Documents\\CanadaPostdoc\\MegaProject\\TaskBatteryAnalysis\\scratch\\results")
+setwd(file.path(getwd(),"scratch\\results"))
 
 # save out
 png("grad_scatterplot3d_plot.png",  width     = 6.2,
@@ -50,6 +55,7 @@ with(df1, text3D(gradient1_cortical_subcortical,gradient2_cortical_subcortical,g
                  labels = Task_name,
                  theta = 70, phi = 10,
                  xlab = "", ylab = "", zlab = "", 
+                 xlim = c(-.4, .4), ylim = c(-.4, .4), zlim = c(-.4, .4),
                  main = "", cex = 1, 
                  bty = "g", d = 2, 
                  adj = 0.5))

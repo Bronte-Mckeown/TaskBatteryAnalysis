@@ -62,4 +62,8 @@ print("Most Negative Task (Dim1):", most_negative_tasks_dim1)
 print("Most Positive Task (Dim2):", most_positive_tasks_dim2)
 print("Most Negative Task (Dim2):", most_negative_tasks_dim2)
 
+
+sum_task_mean_df.to_csv("scratch//results//cca//allTasks//allTask_variates_averaged.csv")
+
+
 print ("end")

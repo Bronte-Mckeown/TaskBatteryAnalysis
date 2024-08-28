@@ -19,7 +19,7 @@ library(stringr)
 
 ########################## Read in data ########################################
 # Set the path to the folder containing the files
-folder_path <- "C:/Users/bront/Documents/CanadaPostdoc/MegaProject/TaskBatteryAnalysis/scratch/results/cca/holdOut"
+folder_path <- "scratch/results/cca/holdOut"
 
 # Get the list of files with the desired pattern
 file_pattern <- "*_variates.csv"  # Change this to your desired file pattern
@@ -144,10 +144,16 @@ options("contrasts")
 # set file name for lmer text output
 fp = "LMM_summedvariates_holdout.txt"
 
-# set current directory to results folder
-setwd("C:/Users/bront/Documents/CanadaPostdoc/MegaProject/TaskBatteryAnalysis/scratch/results/cca/lmm")
+if (!dir.exists(file.path(getwd(), "scratch/results/cca/lmm"))) {
+  # Create the directory if it doesn't exist
+  dir.create(file.path(getwd(), "scratch/results/cca/lmm"), recursive = TRUE)
+}
 
-results_dir <- "C:/Users/bront/Documents/CanadaPostdoc/MegaProject/TaskBatteryAnalysis/scratch/results/cca/lmm"
+results_dir <- file.path(getwd(), "scratch/results/cca/lmm")
+# set current directory to results folder
+setwd(file.path(getwd(), "scratch/results/cca/lmm"))
+
+
 
 ############################# Models ###########################################
 # set up list of dependent variables
@@ -295,48 +301,73 @@ write.csv(merged_df, file = "summed_cca_emmeans.csv", row.names = FALSE)
 
 ########################## Bar charts ##########################################
 # set up list with names of emmeans (predicted means)
-list <- c("emmean1", "emmean2","emmean3", "emmean4")
-
+# Set up list with names of emmeans (predicted means)
+list <- c("emmean1", "emmean2", "emmean3", "emmean4")
+task_order <- c("EasyMath", "HardMath",
+                                                 "FingerTap", "GoNoGo",
+                                                 "Friend", "You",
+                                                 "Documentary", "SciFi",
+                                                 "1B", "0B",
+                                                 "Read", "Memory",
+                                                 "2B-Face", "2B-Scene")  # Replace with your actual task names
+task_order <- rev(task_order)
 fontsize = 6
 
-# function for making plots
-myplot <- function(data, title){
+# Function for making plots
+myplot <- function(data, title, order) {
+  # Extract data from emmGrid object
+  data_summary <- summary(data)
+    
+    
+  data_summary <- data_summary %>%
+    mutate(upper.CL = emmean + (2.913851 * SE),
+          lower.CL = emmean - (2.913851 * SE))
+  # Access Task_name column
+  task_names <- data_summary$Task_name
+  
+  # Convert Task_name to a factor with the specified order
+  task_names <- factor(task_names, levels = order)
+  
+  # Update the data frame with the ordered Task_name
+  data_summary$Task_name <- task_names
+  
   # x axis = Task_name, y axis = emmean, bars = gradient
-  ggplot(summary(data), aes(x = reorder(Task_name, emmean), y = emmean)) +
+  ggplot(data_summary, aes(x = emmean, y = Task_name)) +
     theme_light() +
-    geom_bar(stat="identity",width = 0.9/.pt, position="dodge",color = "black" ,size = 0.5/.pt) +
-    ylim(-7, 6)+
-    theme(axis.text.y = element_text(size = fontsize,color = "black"),
-          #axis.text.x=element_blank(),
-          axis.title.x=element_blank(),
+    geom_bar(stat = "identity", width = 2/.pt, position = "dodge", color = "black", fill = "grey", size = 0.5/.pt) +
+    xlim(-7, 7) +
+    theme(axis.text.y = element_blank(),
+          axis.text.x = element_text(size = fontsize, color = "black"),
+          axis.title.x = element_blank(),
           axis.title.y = element_blank(),
           axis.ticks.x = element_blank(),
-          plot.margin = margin(0, 0, 0, 0, "cm"))+
-    # add error bars
-    geom_errorbar(position=position_dodge(.6/.pt),width=0.25/.pt,size = 0.5/.pt, 
-                  aes(ymax=upper.CL, ymin=lower.CL),alpha=1)
+          plot.margin = margin(0, 0, 0, 0, "cm")) +
+    # Add error bars
+    geom_errorbar(position = position_dodge(.6/.pt), width = 0.25/.pt, size = 0.5/.pt, 
+                  aes(xmax = upper.CL, xmin = lower.CL), alpha = 1)
 }
 
-# call function for list of emmeans set above and store each one (bar1, bar2 etc)
-for(i in seq_along(list)){
-  bar <- paste("bar",i, sep="")
-  b <- myplot(get(list[i]), titles[i])
+# Call function for list of emmeans set above and store each one (bar1, bar2 etc)
+for (i in seq_along(list)) {
+  bar <- paste("bar", i, sep = "")
+  b <- myplot(get(list[i]), titles[i], task_order)
   assign(bar, b)
 }
 
+bar1 <- bar1 + theme(axis.text.y = element_text(size = fontsize, color = "black"))
 
-# put together
-all_plots <- (bar1)/(bar2)/(bar3)/(bar4)&
-  geom_hline(yintercept = 0, size = 0.2/.pt)
+# Put together
+all_plots <- ((bar1) | (bar2) | (bar3) | (bar4)) &
+  geom_vline(xintercept = 0, size = 0.2/.pt)
 all_plots
 
-# save plots as tiff
+# Save plots as tiff
 ggsave(
   "LMM_sumVariates_Holdout_barchart.tiff",
   all_plots, units = "cm",
-  width = 25,
-  height = 10,
-  dpi = 1000, 
+  width = 8.7,
+  height = 4,
+  dpi = 1000
 )
 
 

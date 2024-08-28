@@ -21,7 +21,7 @@ library(stringr) # for matching string pattern
 
 ########################## Read in data ########################################
 # Set the parent directory containing the held-out folders
-parent_folder <- "C:/Users/bront/Documents/CanadaPostdoc/MegaProject/TaskBatteryAnalysis/scratch/results/pca/holdOut"
+parent_folder <- file.path(getwd(), "scratch/results/pca/holdOut")
 
 # Get the list of subfolders
 subfolder_list <- list.dirs(path = parent_folder, full.names = FALSE, recursive = FALSE)
@@ -138,11 +138,18 @@ options("contrasts")
 # set file name for lmer text output
 fp = "LMM_pca_by_task_holdout.txt"
 
+# Check if the directory exists
+if (!dir.exists(file.path(getwd(), "scratch/results/pca/lmm"))) {
+  # Create the directory if it doesn't exist
+  dir.create(file.path(getwd(), "scratch/results/pca/lmm"), recursive = TRUE)
+}
+
 # set current directory to results folder
-setwd("C:/Users/bront/Documents/CanadaPostdoc/MegaProject/TaskBatteryAnalysis/scratch/results/pca/lmm")
 
-results_dir <- "C:/Users/bront/Documents/CanadaPostdoc/MegaProject/TaskBatteryAnalysis/scratch/results/pca/lmm"
 
+results_dir <- file.path(getwd(), "scratch/results/pca/lmm")
+
+setwd(file.path(getwd(), "scratch/results/pca/lmm"))
 ############################# Models ###########################################
 # set up list of dependent variables
 dv <- c("PCA_0",
@@ -321,12 +328,11 @@ raw <- list(df1$PCA_0, df1$PCA_1, df1$PCA_2, df1$PCA_3, df1$PCA_4)
 fontsize = 6
 
 # function for making plots
-myplot2 <- function(data, title, x_raw){
+myplot2 <- function(data, title){
   # x axis = Task_name, y axis = emmean, bars = gradient
   ggplot(summary(data), aes(x = emmean, y = Task_name)) +
     theme_light() +
     geom_bar(stat="identity",width = 2/.pt, position="dodge", color = "black" ,fill = "grey", size = 0.5/.pt) +
-    # geom_point(data = df1, aes(x = x_raw, y = Task_name,alpha =0.01,size = 0.00001, color = 'blue'))+
     xlim(-2.5, 2.5) +
     theme(axis.text.y = element_blank(),
           axis.text.x=element_text(size = fontsize,color = "black"),
@@ -343,7 +349,7 @@ myplot2 <- function(data, title, x_raw){
 # call function for list of emmeans set above and store each one (bar1, bar2 etc)
 for(i in seq_along(list)){
   bar <- paste("bar",i, sep="")
-  b <- myplot2(get(list[i]), titles[i], raw[[i]])
+  b <- myplot2(get(list[i]), titles[i])
   assign(bar, b)
 }
 
@@ -410,3 +416,4 @@ for (i in seq_along(models)) {
   fitted.resid <- plot(fitted(models[[i]]),resid(models[[i]]),xlim=c(-3,3), ylim=c(-3,3))
   dev.off()
 }
+print("Done")

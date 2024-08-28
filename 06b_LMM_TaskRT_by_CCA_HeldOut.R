@@ -19,7 +19,7 @@ library(stringr)
 
 ########################## Read in data ########################################
 # Set the path to the folder containing the files
-folder_path <- "C:/Users/bront/Documents/CanadaPostdoc/MegaProject/TaskBatteryAnalysis/scratch/results/cca/holdOut"
+folder_path <- "scratch/results/cca/holdOut"
 
 # Get the list of files with the desired pattern
 file_pattern <- "*_variates.csv"  # Change this to your desired file pattern
@@ -120,7 +120,8 @@ for (file in file_list) {
 }
 
 # merge with task performance data
-perf_df = read.csv("C:/Users/bront/Documents/CanadaPostdoc/MegaProject/TaskBatteryAnalysis/scratch/data/task_perf_correctRT.csv")
+file_path <- file.path(getwd(), "scratch/data/task_perf_correctRT.csv")
+perf_df = read.csv(file_path)
 
 df$Id_number <- as.character(df$Id_number)
 df$Task_name <- as.character(df$Task_name)
@@ -172,12 +173,15 @@ options("contrasts")
 ########################## Saving results ######################################
 # set file name for lmer text output
 fp = "LMM_taskRT_CCA_holdout.txt"
+# set current directory to results folder
 
 # set current directory to results folder
-setwd("C:/Users/bront/Documents/CanadaPostdoc/MegaProject/TaskBatteryAnalysis/scratch/results/cca/lmm/taskperf/RT")
 
-results_dir <- "C:/Users/bront/Documents/CanadaPostdoc/MegaProject/TaskBatteryAnalysis/scratch/results/cca/lmm/taskperf/RT"
 
+results_dir <- file.path(getwd(), "scratch/results/cca/lmm/taskperf/rt")
+
+file_path <- file.path(getwd(), "scratch/results/pca/lmm/taskperf/rt")
+setwd(file_path)
 ############################# Models ###########################################
 # set up list of dependent variables
 dv <- c("Z_RT_outliers")
@@ -276,7 +280,7 @@ sum_CCAloading_4.slopes <- emtrends(model1, ~ Task_name, var="sum_CCAloading_4",
 # contrast slopes
 sum_CCAloading_4.contrasts <- emtrends(model1, pairwise ~ Task_name, var="sum_CCAloading_4", adjust = 'tukey', infer = TRUE)
 # save to txt file
-cat("Probing two-way interaction between task and inner speech:\n", file = fp2, append = TRUE)
+cat("Probing two-way interaction between task and positive engagement:\n", file = fp2, append = TRUE)
 capture.output(sum_CCAloading_4.slopes, file = fp2, append = TRUE)
 cat("\n\n\n", file = fp2, append = TRUE)
 capture.output(sum_CCAloading_4.contrasts,file = fp2, append = TRUE)
@@ -311,7 +315,7 @@ sum_CCAloading_4.task.emmips <- emmip(model1, Task_name ~ sum_CCAloading_4, at =
 
 # call interaction plot function for list of emmips set above and store each one
 sum_CCAloading_4plot <- interaction_plots(sum_CCAloading_4.task.emmips, sum_CCAloading_4.task.emmips[, 2],
-                                          "Inner Speech", "Response Time (z-scored)",
+                                          "Positive Engagement", "Response Time (z-scored)",
                                           df1$sum_CCAloading_4, df1$Z_RT_outliers)
 sum_CCAloading_4plot
 

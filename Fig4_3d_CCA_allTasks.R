@@ -7,11 +7,11 @@ library(plotly)
 library(patchwork)
 library("plot3D")
 
-# set working directory
-setwd("C:\\Users\\bront\\Documents\\CanadaPostdoc\\MegaProject\\TaskBatteryAnalysis\\")
+
+file_path <- file.path(getwd(),"scratch\\results\\cca\\allTasks\\allTask_variates.csv")
 
 # Read the first CSV file of omnibus CCA
-first_csv <- read.csv("scratch\\results\\cca\\allTasks\\allTask_variates.csv")
+first_csv <- read.csv(file_path)
 
 # Sort first_csv by 'Id_number' and 'Task_name'
 first_csv_sorted <- first_csv %>%
@@ -49,7 +49,10 @@ df2 <- first_csv %>%
 
 ##########################
 # save proper one out
-setwd("C:\\Users\\bront\\Documents\\CanadaPostdoc\\MegaProject\\TaskBatteryAnalysis\\scratch\\results\\cca")
+setwd(file.path(getwd(), "scratch\\results\\pca"))
+#Remove overlaps
+df2 <- df2 %>%
+  filter(Task_name != "FingerTap" & Task_name != "SciFi" & Task_name != "You")
 
 png("scatterplot3d_plot.png",  width     = 2,
     height    = 2,
@@ -58,7 +61,8 @@ png("scatterplot3d_plot.png",  width     = 2,
     pointsize = 4)  # Adjust width and height as needed
 
 with(df2, text3D(sum_CCAloading_1_mean,sum_CCAloading_2_mean, sum_CCAloading_3_mean, 
-                 labels = Task_name, zlim = c(-2.5,2),
+                 labels = Task_name, 
+                 xlim = c(-3, 3), ylim = c(-3, 3), zlim = c(-3, 3),
                  theta = 30, phi = 10,
                  xlab = "", ylab = "", zlab = "", 
                  main = "", cex = 1.4, 

@@ -19,7 +19,7 @@ library(stringr)
 
 ########################## Read in data ########################################
 # Set the parent directory containing the held-out folders
-parent_folder <- "C:/Users/bront/Documents/CanadaPostdoc/MegaProject/TaskBatteryAnalysis/scratch/results/pca/holdOut"
+parent_folder <- "scratch/results/pca/holdOut"
 
 # Get the list of subfolders
 subfolder_list <- list.dirs(path = parent_folder, full.names = FALSE, recursive = FALSE)
@@ -104,7 +104,7 @@ for (file in file_list) {
 }
 
 # merge with task performance data
-perf_df = read.csv("C:/Users/bront/Documents/CanadaPostdoc/MegaProject/TaskBatteryAnalysis/scratch/data/task_perf_correctRT.csv")
+perf_df = read.csv("scratch/data/task_perf_correctRT.csv")
 
 # change to characters for merging
 df$Id_number <- as.character(df$Id_number)
@@ -161,9 +161,9 @@ options("contrasts")
 fp = "LMM_taskacc_PCA_holdout.txt"
 
 # set current directory to results folder
-setwd("C:/Users/bront/Documents/CanadaPostdoc/MegaProject/TaskBatteryAnalysis/scratch/results/pca/lmm/taskperf/acc")
+setwd(file.path(getwd(), "scratch/results/pca/lmm/taskperf/acc"))
 
-results_dir <- "C:/Users/bront/Documents/CanadaPostdoc/MegaProject/TaskBatteryAnalysis/scratch/results/pca/lmm/taskperf/acc"
+results_dir <- "/"
 
 ############################# Models ###########################################
 # set up list of dependent variables

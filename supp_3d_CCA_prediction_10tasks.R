@@ -19,11 +19,12 @@ library("plot3D")
 
 ########################## Read in data ########################################
 #set current working directory
-setwd("C:\\Users\\bront\\Documents\\CanadaPostdoc\\MegaProject\\TaskBatteryAnalysis\\scratch\\results\\cca\\allTasks")
-
+# setwd("C:\\Users\\bront\\Documents\\CanadaPostdoc\\MegaProject\\TaskBatteryAnalysis\\scratch\\results\\cca\\allTasks")
+file_path_1 = file.path(getwd(), "scratch/results/cca/allTasks/reptasks_cca_predictgrads_10tasks.csv")
+file_path_2 = file.path(getwd(), "scratch/results/cca/allTasks/reptasks_cca_realgrads.csv")
 #read in csv file
-df_predicted <- read.csv("reptasks_cca_predictgrads_10tasks.csv", na.strings=c(""," ","NA", "nan"))
-df_actual <- read.csv("reptasks_cca_realgrads.csv", na.strings=c(""," ","NA", "nan"))
+df_predicted <- read.csv(file_path_1, na.strings=c(""," ","NA", "nan"))
+df_actual <- read.csv(file_path_2, na.strings=c(""," ","NA", "nan"))
 
 ################################ 3d plot #######################################
 # drop cols
@@ -51,7 +52,7 @@ means_actual$suffix <- "True"
 stacked_data <- rbind(means_pred, means_actual)
 
 ################################################################################
-setwd("C:\\Users\\bront\\Documents\\CanadaPostdoc\\MegaProject\\TaskBatteryAnalysis\\scratch\\results\\cca")
+setwd(file.path(getwd(), "scratch\\results\\cca"))
 
 png("scatterplot3d_predict_10tasks.png",  width     = 2,
     height    = 2,
@@ -61,7 +62,7 @@ png("scatterplot3d_predict_10tasks.png",  width     = 2,
 
 with(stacked_data, text3D(`Gradient 1`,`Gradient 2`, `Gradient 3`, 
                           col=c(rep("red", 4), rep("black", 4)),
-                          xlim = c(-1.5,2.3),
+                          xlim = c(-2.5, 2.5), ylim = c(-2.5, 2.5), zlim = c(-2.5, 2.5),
                  labels = Task_name,
                  theta = 30, phi = 10,
                  xlab = "", ylab = "", zlab = "", 
