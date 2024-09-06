@@ -10,7 +10,7 @@ library(tidyr)
 
 ########################## Read in data ########################################
 #set current working directory
-setwd("C:\\Users\\bront\\Documents\\CanadaPostdoc\\MegaProject\\MegaProject\\scratch\\results\\cca\\allTasks\\projectedBrainMaps")
+setwd("scratch\\results\\cca\\allTasks\\projectedBrainMaps")
 
 #read in csv file
 d <- read.csv("ccaDim_yeo_avgs.csv", na.strings=c(""," ","NA", "nan"))
@@ -65,7 +65,7 @@ radar <- ggradar(subset_df, grid.min = -20, grid.max = 20,grid.mid = 0,
 radar
 
 # save
-setwd("C:\\Users\\bront\\Documents\\CanadaPostdoc\\MegaProject\\MegaProject\\scratch\\results\\cca\\allTasks\\projectedBrainMaps")
+setwd("scratch\\results\\cca\\allTasks\\projectedBrainMaps")
 ggsave(
   "ccaDims_radar.tiff",
   radar, units = "cm",
