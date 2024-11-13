@@ -7,13 +7,13 @@ import pandas as pd
 from matplotlib import rc
 
 # read in data
-null_corrs_df = pd.read_csv("scratch/results/cca/allTasks/nullcorrs_byPS_diff_pca.csv")
+null_corrs_df = pd.read_csv("scratch/results/cca/allTasks/nullcorrs_byPS_same_pca.csv")
 real_corrs_df = pd.read_csv("scratch/results/cca/allTasks/realcorrs.csv")
 
 # set variables for saving out plots
 n_comp = 5
 num_iterations = 1000
-type_shuff = "byPS_diff" 
+type_shuff = "byPS_same" 
 
 # Set font size (this makes it 6ish in powerpoint)
 plt.rcParams.update({'font.size': 5})
@@ -48,7 +48,7 @@ for col in range(n_comp-1):
 
     # save figure
     fig.savefig(f"scratch/results/cca/allTasks/cca{col+1}_corrs_noRot_pca{n_comp}_{type_shuff}_{num_iterations}iters.png",
-                bbox_inches = "tight", pad_inches=0.01,linewidth=0.5)
+                bbox_inches = "tight", pad_inches=0.01)
 
     # close the figure to free up memory
     plt.close(fig)
