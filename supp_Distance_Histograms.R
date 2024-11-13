@@ -7,7 +7,7 @@ library(patchwork)
 library(plyr)
 
 # set working directory
-setwd("C:\\Users\\bront\\Documents\\CanadaPostdoc\\MegaProject\\TaskBatteryAnalysis\\scratch\\results\\cca\\allTasks")
+setwd("TaskBatteryAnalysis/scratch/results")
 
 # Pattern to match files
 file_pattern <- "^(.*)_dists_for_bargraphs\\.csv$"
@@ -66,6 +66,6 @@ allplots
 ggsave(
   "distances_histograms_rawpoints.tiff",
   allplots, units = "cm",
-  width = 4.38,
-  height = 3.9,
-  dpi = 1000)
+  width = 20,
+  height = 10,
+  dpi = 600)
